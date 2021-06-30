@@ -112,6 +112,20 @@ describe('Post tests', () => {
     expect(res.body).toEqual([post1, post2]);
       
   });
+
+  it('gets a post by id via GET', async () => {
+    const post1 = await Post.insert({
+      userId: user.id,
+      photoUrl: 'blah',
+      caption: 'Look at this cool post!',
+      tags: ['cool', 'amaz-ing', 'awesome']
+    });
+
+    const res = await agent
+      .get(`/api/v1/posts/${user.id}`);
+
+    expect(res.body).toEqual(post1);
+  });
   
 });
 
