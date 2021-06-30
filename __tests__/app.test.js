@@ -3,6 +3,7 @@ import setup from '../data/setup.js';
 import request from 'supertest';
 import app from '../lib/app.js';
 import UserService from '../lib/services/UserService.js';
+import Post from '../lib/models/Post.js';
 
 const agent = request.agent(app);
 
@@ -57,7 +58,7 @@ describe('Post tests', () => {
 
   beforeEach(async() => {
     await setup(pool);
-    agent = await request.agent(app);
+    agent = request.agent(app);
     user = await UserService.create({
       username: 'Ollie',
       password: 'password',
@@ -71,7 +72,7 @@ describe('Post tests', () => {
   });
 
   it('creates a post via POST', async () => {
-    const res = await request(app)
+    const res = await agent
       .post('/api/v1/posts')
       .send({
         userId: user.id,
@@ -81,11 +82,35 @@ describe('Post tests', () => {
       });
 
     expect(res.body).toEqual({
+      id: '1',
       userId: user.id,
       photoUrl: 'blah',
       caption: 'Look at this cool post!',
       tags: ['cool', 'amaz-ing', 'awesome']
     });
+  });
+
+  it('gets all posts via GET', async () => {
+    const post1 = await Post.insert({
+      userId: user.id,
+      photoUrl: 'blah',
+      caption: 'Look at this cool post!',
+      tags: ['cool', 'amaz-ing', 'awesome']
+
+    });
+    const post2 = await Post.insert({
+      userId: user.id,
+      photoUrl: 'boom',
+      caption: 'Look at this terrible post!',
+      tags: ['sucks', 'boooo']
+
+    });
+
+    const res = await agent
+      .get('/api/v1/posts');
+
+    expect(res.body).toEqual([post1, post2]);
+      
   });
   
 });
