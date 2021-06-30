@@ -126,6 +126,23 @@ describe('Post tests', () => {
 
     expect(res.body).toEqual(post1);
   });
+
+  it('updates a post via PATCH', async () => {
+    const post = await Post.insert({
+      userId: user.id,
+      photoUrl: 'blah',
+      caption: 'Look at this cool post!',
+      tags: ['cool', 'amaz-ing', 'awesome']
+    });
+
+    post.caption = 'Winning.';
+
+    const res = await agent
+      .patch(`/api/v1/posts/${post.id}`)
+      .send({ caption: 'Winning.' });
+
+    expect(res.body).toEqual(post);
+  });
   
 });
 
