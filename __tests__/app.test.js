@@ -8,18 +8,19 @@ describe('demo routes', () => {
     return setup(pool);
   });
 
-  it('creates a user via POST', async () => {
+  it('sign up a user via POST', async () => {
     const res = await request(app)
       .post('/api/v1/auth/signup')
       .send({
         username: 'user',
-        passwordHash: 'password',
+        password: 'password',
         profilePhotoUrl: 'photourl.com'
       });
 
     expect(res.body).toEqual({
       id: '1',
-      username: 'user'
+      username: 'user',
+      profilePhotoUrl: 'photourl.com'
     });
   });
 });
