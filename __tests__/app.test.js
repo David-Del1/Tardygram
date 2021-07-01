@@ -160,9 +160,31 @@ describe('Post tests', () => {
     expect(res.body).toEqual(post);
   });
 
-  // it('gets most popular posts via GET', async () => {
+  it('gets most popular posts via GET', async () => {
 
-  // })
+    const post = await Post.insert({
+      userId: user.id,
+      photoUrl: 'blah',
+      caption: 'Look at this cool post!',
+      tags: ['cool', 'amaz-ing', 'awesome']
+    });
+    await Comment.insert({
+      commentBy: user.id,
+      post: post.id,
+      comment: 'Looks uber cool'
+    });
+    await Comment.insert({
+      commentBy: user.id,
+      post: post.id,
+      comment: 'Looks uber cool'
+    });
+
+    const res = await request(app)
+      .get('/api/v1/posts/popular');
+
+    expect(res.body[0]).toEqual(post);
+
+  });
   
 });
 
